@@ -23,7 +23,8 @@ window.JasminePromisMatchers = new function() {
 
     OriginalPromise = window.Promise;
 
-    window.Promise = ES6Promise.Promise;
+    // Polyfill if necessary for browsers like Phantom JS.
+    window.Promise = window.Promise || ES6Promise.Promise;
 
     if (useMockClock) {
       jasmine.clock().install();
@@ -40,6 +41,12 @@ window.JasminePromisMatchers = new function() {
       jasmine.clock().uninstall();
     }
   };
+
+  this.maybeTick = function() {
+    if (this.useMockClock) {
+      jasmine.clock().tick(1);
+    }
+  };
 }();
 
 beforeEach(function() {
@@ -53,9 +60,7 @@ beforeEach(function() {
             },
             function() {});
 
-          if (window.JasminePromisMatchers.useMockClock) {
-            jasmine.clock().tick(1);
-          }
+          JasminePromisMatchers.maybeTick();
 
           return { pass: true };
         }
@@ -72,9 +77,7 @@ beforeEach(function() {
               expect(actual).toEqual(expected);
             });
 
-          if (window.JasminePromisMatchers.useMockClock) {
-            jasmine.clock().tick(1);
-          }
+          JasminePromisMatchers.maybeTick();
 
           return { pass: true };
         }
@@ -89,9 +92,7 @@ beforeEach(function() {
               expect('Promise').toBe('resolved');
             });
 
-          if (window.JasminePromisMatchers.useMockClock) {
-            jasmine.clock().tick(1);
-          }
+          JasminePromisMatchers.maybeTick();
 
           return { pass: true };
         }
@@ -108,9 +109,7 @@ beforeEach(function() {
               expect('Promise').toBe('resolved');
             });
 
-          if (window.JasminePromisMatchers.useMockClock) {
-            jasmine.clock().tick(1);
-          }
+          JasminePromisMatchers.maybeTick();
 
           return { pass: true };
         }
