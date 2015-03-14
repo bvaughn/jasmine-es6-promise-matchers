@@ -1,15 +1,18 @@
 Jasmine Promise Matchers
 ================
 
-Custom matchers for use with the **[ES6Promise polyfill library](https://github.com/jakearchibald/es6-promise)** and **[Jasmine 2.x](http://jasmine.github.io/)**.
+Custom matchers for testing ES6 Promises with **[Jasmine 2.x](http://jasmine.github.io/)**.
+
+This library is compatible with the **[ES6Promise polyfill library](https://github.com/jakearchibald/es6-promise)** if the current browser does not support ES6 Promises. (This means it will work with Phantom JS.)
 
 # Installing
 
-`npm install jasmine-es6-promise-matchers`
+You can install with either NPM or Bower like so:
 
-...or...
-
-`bower install jasmine-es6-promise-matchers`
+```shell
+npm install jasmine-es6-promise-matchers
+bower install jasmine-es6-promise-matchers
+```
 
 # Documentation
 
