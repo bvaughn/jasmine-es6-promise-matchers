@@ -1,0 +1,37 @@
+{
+  "name": "jasmine-es6-promise-matchers",
+  "version": "1.0.0",
+  "homepage": "https://github.com/bvaughn/jasmine-es6-promise-matchers",
+  "description": "Jasmine matchers for testing ES6 Promises",
+  "authors": [
+    "Brian Vaughn <brian.david.vaughn@gmail.com>"
+  ],
+  "keywords": [
+    "Promise",
+    "ES6Promise",
+    "Jasmine",
+    "matchers",
+    "unit",
+    "test",
+    "tests"
+  ],
+  "license": "Apache License Version 2.0,",
+  "main": "gulpfile.js",
+  "directories": {},
+  "dependencies": {
+    "es6-promise": "~2.0.1"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.10",
+    "jasmine": "2.1.1"
+  },
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bvaughn/jasmine-es6-promise-matchers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bvaughn/jasmine-es6-promise-matchers/issues"
+  }
+}
