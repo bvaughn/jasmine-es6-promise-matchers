@@ -16,17 +16,19 @@ window.JasminePromisMatchers = new function() {
   /**
    * Install the JasminePromisMatchers library.
    *
-   * @param useMockClock If TRUE, promise matchers will automatically tick the clock to resolve pending Promises.
+   * @param useMockClock Promise matchers should automatically initialize the Jasmine mock-clock
+   *                     and expectation functions should tick the clock to resolve pending Promises.
+   *                     Defaults to true.
    */
   this.install = function(useMockClock) {
-    this.useMockClock = useMockClock;
+    this.useMockClock_ = useMockClock !== false;
 
     OriginalPromise = window.Promise;
 
     // Polyfill if necessary for browsers like Phantom JS.
     window.Promise = window.Promise || ES6Promise.Promise;
 
-    if (useMockClock) {
+    if (this.useMockClock_) {
       jasmine.clock().install();
     }
   };
@@ -37,15 +39,26 @@ window.JasminePromisMatchers = new function() {
   this.uninstall = function() {
     window.Promise = OriginalPromise;
 
-    if (this.useMockClock) {
+    if (this.useMockClock_) {
       jasmine.clock().uninstall();
     }
   };
 
-  this.maybeTick = function() {
-    if (this.useMockClock) {
+  this.maybeTickClockAndCompleteCompare_ = function(promiseResolution, message) {
+    if (this.useMockClock_) {
       jasmine.clock().tick(1);
+
+      if (!promiseResolution.valid) {
+        return {
+          message: message,
+          pass: false
+        };
+      }
     }
+
+    return {
+      pass: true
+    };
   };
 }();
 
@@ -54,64 +67,71 @@ beforeEach(function() {
     toBeRejected: function() {
       return {
         compare: function(promise) {
+          var status = {valid: false};
+
           promise.then(
             function() {
-              expect('Promise').toBe('rejected');
+              throw new Error('Expected Promise to be rejected.');
             },
-            function() {});
+            function() {
+              status.valid = true;
+            });
 
-          JasminePromisMatchers.maybeTick();
-
-          return { pass: true };
+          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
         }
       };
     },
     toBeRejectedWith: function() {
       return {
         compare: function(promise, expected) {
+          var status = {valid: false};
+
           promise.then(
             function() {
-              expect('Promise').toBe('rejected');
+              throw new Error('Expected Promise to be rejected.');
             },
             function(actual) {
+              status.valid = true;
               expect(actual).toEqual(expected);
             });
 
-          JasminePromisMatchers.maybeTick();
-
-          return { pass: true };
+          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
         }
       };
     },
     toBeResolved: function() {
       return {
         compare: function(promise) {
+          var status = {valid: false};
+
           promise.then(
-            function() {},
             function() {
-              expect('Promise').toBe('resolved');
+              status.valid = true;
+            },
+            function() {
+              throw new Error('Expected Promise to be resolved.');
             });
 
-          JasminePromisMatchers.maybeTick();
-
-          return { pass: true };
+          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
         }
       };
     },
     toBeResolvedWith: function() {
       return {
         compare: function(promise, expected) {
+          var status = {valid: false};
+
           promise.then(
             function(actual) {
+              status.valid = true;
+
               expect(actual).toEqual(expected);
             },
             function() {
-              expect('Promise').toBe('resolved');
+              throw new Error('Expected Promise to be resolved.');
             });
 
-          JasminePromisMatchers.maybeTick();
-
-          return { pass: true };
+          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
         }
       };
     }
