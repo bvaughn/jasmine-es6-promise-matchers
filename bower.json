@@ -23,10 +23,13 @@
     "**/.*",
     "bower_components",
     "node_modules",
-    "tests"
+    "tests",
+    "test"
   ],
   "dependencies": {
     "es6-promise": "~2.0.1"
   },
-  "devDependencies": {}
+  "moduleType": [
+    "globals"
+  ]
 }
