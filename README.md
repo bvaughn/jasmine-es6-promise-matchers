@@ -14,9 +14,28 @@ npm install jasmine-es6-promise-matchers
 bower install jasmine-es6-promise-matchers
 ```
 
-# Documentation
+# Overview
 
-Testing promises should be simple. This library aims to make it so!
+Testing promises should be simple, but it's normally a bit of a hassle. Your tests probably look something like this:
+
+```js
+var resolvedValue;
+
+promise.then(
+  function(value) {
+    resolvedValue = value;
+  });
+
+jasmine.clock().tick(1);
+
+expect(resolvedValue).toBe('something');
+```
+
+Using the matchers provided by this library, your tests could instead look like this:
+
+```js
+expect(promise).toBeResolvedWith('something');
+```
 
 ## Initializing the library
 
@@ -41,7 +60,9 @@ afterEach(function() {
 
 Now you're ready to start testing!
 
-## Jasmine matchers
+## Using the matchers
+
+This library includes a couple of matchers, shown below.
 
 ##### toBeRejected
 Verify that a Promise is rejected!
