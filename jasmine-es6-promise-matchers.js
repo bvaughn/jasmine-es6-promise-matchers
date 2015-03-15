@@ -10,11 +10,11 @@
  * expect(promise).toBeResolved();
  * expect(promise).toBeResolvedWith(someValue);
  */
-window.JasminePromisMatchers = new function() {
+window.JasminePromiseMatchers = new function() {
   var OriginalPromise;
 
   /**
-   * Install the JasminePromisMatchers library.
+   * Install the JasminePromiseMatchers library.
    *
    * @param useMockClock Promise matchers should automatically initialize the Jasmine mock-clock
    *                     and expectation functions should tick the clock to resolve pending Promises.
@@ -34,7 +34,7 @@ window.JasminePromisMatchers = new function() {
   };
 
   /**
-   * Uninstall the JasminePromisMatchers library.
+   * Uninstall the JasminePromiseMatchers library.
    */
   this.uninstall = function() {
     window.Promise = OriginalPromise;
@@ -77,7 +77,7 @@ beforeEach(function() {
               status.valid = true;
             });
 
-          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
+          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
         }
       };
     },
@@ -95,7 +95,7 @@ beforeEach(function() {
               expect(actual).toEqual(expected);
             });
 
-          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
+          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
         }
       };
     },
@@ -112,7 +112,7 @@ beforeEach(function() {
               throw new Error('Expected Promise to be resolved.');
             });
 
-          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
+          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
         }
       };
     },
@@ -131,9 +131,13 @@ beforeEach(function() {
               throw new Error('Expected Promise to be resolved.');
             });
 
-          return JasminePromisMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
+          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
         }
       };
     }
   });
 });
+
+// Maintain backwards compatibility until a 2.0 release;
+// See issue #1 (and feel free to laugh at me for my inability to type or spell-check)
+window.JasminePromisMatchers = window.JasminePromiseMatchers;
