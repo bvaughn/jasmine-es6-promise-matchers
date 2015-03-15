@@ -43,10 +43,10 @@ To use it, just install the library before your tests begin:
 
 ```js
 beforeEach(function() {
-  // `true` automatically ticks the Jasmine mock-clock for you after each assert.
+  // Defaults to `true` which automatically ticks the Jasmine mock-clock for you after each assert.
   // `false` leaves the clock management up to you.
   // I recommend `true` unless your test involves other timing concerns.
-  JasminePromisMatchers.install(true);
+  JasminePromiseMatchers.install();
 });
 ```
 
@@ -54,7 +54,7 @@ And uninstall it once your tests are over:
 
 ```js
 afterEach(function() {
-  JasminePromisMatchers.uninstall();
+  JasminePromiseMatchers.uninstall();
 });
 ```
 
