@@ -16,25 +16,24 @@ bower install jasmine-es6-promise-matchers
 
 # Overview
 
-Testing promises should be simple, but it's normally a bit of a hassle. Your tests probably look something like this:
+Testing promises should be simple but it's normally a bit of a hassle. Your tests probably look something like this:
 
 ```js
-var resolvedValue;
-
-promise.then(
-  function(value) {
-    resolvedValue = value;
-  });
-
-jasmine.clock().tick(1);
-
-expect(resolvedValue).toBe('something');
+function(done) {
+  promise.then(
+    function(value) {
+      expect(value).toBe('something');
+      done();
+    },
+    done.fail);
 ```
 
-Using the matchers provided by this library, your tests could instead look like this:
+Using the matchers provided by this library your tests could instead look like this:
 
 ```js
-expect(promise).toBeResolvedWith('something');
+function(done) {
+  expect(promise).toBeResolvedWith('something', done);
+}
 ```
 
 ## Initializing the library
@@ -42,20 +41,13 @@ expect(promise).toBeResolvedWith('something');
 To use it, just install the library before your tests begin:
 
 ```js
-beforeEach(function() {
-  // Defaults to `true` which automatically ticks the Jasmine mock-clock for you after each assert.
-  // `false` leaves the clock management up to you.
-  // I recommend `true` unless your test involves other timing concerns.
-  JasminePromiseMatchers.install();
-});
+beforeEach(functionJasminePromiseMatchers.install);
 ```
 
 And uninstall it once your tests are over:
 
 ```js
-afterEach(function() {
-  JasminePromiseMatchers.uninstall();
-});
+afterEach(JasminePromiseMatchers.uninstall);
 ```
 
 Now you're ready to start testing!
@@ -64,32 +56,40 @@ Now you're ready to start testing!
 
 This library includes a couple of matchers, shown below.
 
-##### toBeRejected
-Verify that a Promise is rejected!
+##### toBeRejected(done:Function)
+Verify that a Promise is (or will be) rejected.
 
 ```js
-expect(promise).toBeRejected();
+expect(promise).toBeRejected(done);
 ```
 
-##### toBeRejectedWith
-Verify that a Promise is rejected with a specific value:
+##### toBeRejectedWith(data:*, done:Function)
+Verify that a Promise is rejected with a specific value.
 
 ```js
-expect(promise).toBeRejectedWith('something');
+expect(promise).toBeRejectedWith('something', done);
+
+// Asymmetric matching is also supported for objects:
+var partialMatch = jasmine.objectContaining({partial: 'match'});
+expect(promise).toBeRejectedWith(partialMatch, done);
 ```
 
-##### toBeResolved
-Verify that a Promise is resolved!
+##### toBeResolved(done:Function)
+Verify that a Promise is resolved.
 
 ```js
-expect(promise).toBeResolved();
+expect(promise).toBeResolved(done);
 ```
 
-##### toBeResolvedWith
-Verify that a Promise is resolved with a specific value:
+##### toBeResolvedWith(data:*, done:Function)
+Verify that a Promise is resolved with a specific value.
 
 ```js
-expect(promise).toBeResolvedWith('something');
+expect(promise).toBeResolvedWith('something', done);
+
+// Asymmetric matching is also supported for objects:
+var partialMatch = jasmine.objectContaining({partial: 'match'});
+expect(promise).toBeResolvedWith(partialMatch, done);
 ```
 
 ## Questions? Suggestions?

@@ -15,22 +15,12 @@ window.JasminePromiseMatchers = new function() {
 
   /**
    * Install the JasminePromiseMatchers library.
-   *
-   * @param useMockClock Promise matchers should automatically initialize the Jasmine mock-clock
-   *                     and expectation functions should tick the clock to resolve pending Promises.
-   *                     Defaults to true.
    */
-  this.install = function(useMockClock) {
-    this.useMockClock_ = useMockClock !== false;
-
+  this.install = function() {
     OriginalPromise = window.Promise;
 
     // Polyfill if necessary for browsers like Phantom JS.
     window.Promise = window.Promise || ES6Promise.Promise;
-
-    if (this.useMockClock_) {
-      jasmine.clock().install();
-    }
   };
 
   /**
@@ -38,106 +28,80 @@ window.JasminePromiseMatchers = new function() {
    */
   this.uninstall = function() {
     window.Promise = OriginalPromise;
-
-    if (this.useMockClock_) {
-      jasmine.clock().uninstall();
-    }
   };
 
-  this.maybeTickClockAndCompleteCompare_ = function(promiseResolution, message) {
-    if (this.useMockClock_) {
-      jasmine.clock().tick(1);
+  var PROMISE_STATE = {
+    PENDING: 'pending',
+    REJECTED: 'rejected',
+    RESOLVED: 'resolved',
+  };
 
-      if (!promiseResolution.valid) {
-        return {
-          message: message,
-          pass: false
-        };
+  var verifyData = function(actualData, expectedData, done) {
+    if (expectedData !== undefined) {
+      if (expectedData.asymmetricMatch instanceof Function) {
+        if (!expectedData.asymmetricMatch(actualData)) {
+          done.fail('Expected ' + actualData + ' to contain ' + expectedData);
+        }
+      } else if (actualData !== expectedData) {
+        done.fail('Expected ' + actualData + ' to be ' + expectedData);
       }
     }
-
-    return {
-      pass: true
-    };
   };
-}();
 
-beforeEach(function() {
-  jasmine.addMatchers({
-    toBeRejected: function() {
-      return {
-        compare: function(promise) {
-          var status = {valid: false};
-
-          promise.then(
-            function() {
-              throw new Error('Expected Promise to be rejected.');
-            },
-            function() {
-              status.valid = true;
-            });
-
-          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
-        }
-      };
-    },
-    toBeRejectedWith: function() {
-      return {
-        compare: function(promise, expected) {
-          var status = {valid: false};
-
-          promise.then(
-            function() {
-              throw new Error('Expected Promise to be rejected.');
-            },
-            function(actual) {
-              status.valid = true;
-              expect(actual).toEqual(expected);
-            });
-
-          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not reject.');
-        }
-      };
-    },
-    toBeResolved: function() {
-      return {
-        compare: function(promise) {
-          var status = {valid: false};
-
-          promise.then(
-            function() {
-              status.valid = true;
-            },
-            function() {
-              throw new Error('Expected Promise to be resolved.');
-            });
-
-          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
-        }
-      };
-    },
-    toBeResolvedWith: function() {
-      return {
-        compare: function(promise, expected) {
-          var status = {valid: false};
-
-          promise.then(
-            function(actual) {
-              status.valid = true;
-
-              expect(actual).toEqual(expected);
-            },
-            function() {
-              throw new Error('Expected Promise to be resolved.');
-            });
-
-          return JasminePromiseMatchers.maybeTickClockAndCompleteCompare_(status, 'Promise did not resolve.');
-        }
-      };
+  var verifyState = function(actualState, expectedState, done) {
+    if (actualState !== expectedState) {
+      done.fail('Expected ' + actualState + ' to be ' + expectedState);
     }
-  });
-});
+  };
 
-// Maintain backwards compatibility until a 2.0 release;
-// See issue #1 (and feel free to laugh at me for my inability to type or spell-check)
-window.JasminePromisMatchers = window.JasminePromiseMatchers;
+  // Helper method to verify expectations and return a Jasmine-friendly info-object
+  var verifyPromiseExpectations = function(done, promise, expectedState, expectedData) {
+    promise.then(
+      function(data) {
+        verifyState(PROMISE_STATE.RESOLVED, expectedState, done);
+        verifyData(data, expectedData, done);
+        done();
+      },
+      function(data) {
+        verifyState(PROMISE_STATE.REJECTED, expectedState, done);
+        verifyData(data, expectedData, done);
+        done();
+      });
+
+    return {pass: true};
+  };
+
+  // Install the matchers
+  beforeEach(function() {
+    jasmine.addMatchers({
+      toBeRejected: function() {
+        return {
+          compare: function(promise, done) {
+            return verifyPromiseExpectations(done, promise, PROMISE_STATE.REJECTED);
+          }
+        };
+      },
+      toBeRejectedWith: function() {
+        return {
+          compare: function(promise, expectedData, done) {
+            return verifyPromiseExpectations(done, promise, PROMISE_STATE.REJECTED, expectedData);
+          }
+        };
+      },
+      toBeResolved: function() {
+        return {
+          compare: function(promise, done) {
+            return verifyPromiseExpectations(done, promise, PROMISE_STATE.RESOLVED);
+          }
+        };
+      },
+      toBeResolvedWith: function() {
+        return {
+          compare: function(promise, expectedData, done) {
+            return verifyPromiseExpectations(done, promise, PROMISE_STATE.RESOLVED, expectedData);
+          }
+        };
+      }
+    });
+  });
+}();

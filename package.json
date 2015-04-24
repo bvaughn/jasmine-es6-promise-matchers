@@ -1,6 +1,6 @@
 {
   "name": "jasmine-es6-promise-matchers",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "homepage": "https://github.com/bvaughn/jasmine-es6-promise-matchers",
   "description": "Jasmine matchers for testing ES6 Promises",
   "authors": [
@@ -22,10 +22,17 @@
     "es6-promise": "~2.0.1"
   },
   "devDependencies": {
+    "es6-promise": "^2.0.1",
     "gulp": "~3.8.10",
-    "jasmine": "2.1.1"
+    "jasmine": "2.1.1",
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.8",
+    "karma-cli": "0.0.4",
+    "karma-jasmine": "^0.3.5"
   },
   "scripts": {
+    "test": "karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
