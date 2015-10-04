@@ -10,24 +10,25 @@
  * expect(promise).toBeResolved();
  * expect(promise).toBeResolvedWith(someValue);
  */
-window.JasminePromiseMatchers = new function() {
+(window || global).JasminePromiseMatchers = new function() {
+  var windowOrGlobal = window || global;
   var OriginalPromise;
 
   /**
    * Install the JasminePromiseMatchers library.
    */
   this.install = function() {
-    OriginalPromise = window.Promise;
+    OriginalPromise = windowOrGlobal.Promise;
 
     // Polyfill if necessary for browsers like Phantom JS.
-    window.Promise = window.Promise || ES6Promise.Promise;
+    windowOrGlobal.Promise = windowOrGlobal.Promise || ES6Promise.Promise;
   };
 
   /**
    * Uninstall the JasminePromiseMatchers library.
    */
   this.uninstall = function() {
-    window.Promise = OriginalPromise;
+    windowOrGlobal.Promise = OriginalPromise;
   };
 
   var PROMISE_STATE = {

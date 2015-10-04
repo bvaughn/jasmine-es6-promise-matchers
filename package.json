@@ -1,6 +1,6 @@
 {
   "name": "jasmine-es6-promise-matchers",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/bvaughn/jasmine-es6-promise-matchers",
   "description": "Jasmine matchers for testing ES6 Promises",
   "authors": [
@@ -16,7 +16,7 @@
     "tests"
   ],
   "license": "Apache License Version 2.0,",
-  "main": "gulpfile.js",
+  "main": "jasmine-es6-promise-matchers.js",
   "directories": {},
   "dependencies": {
     "es6-promise": "~2.0.1"
