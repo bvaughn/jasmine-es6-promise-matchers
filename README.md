@@ -41,7 +41,7 @@ function(done) {
 To use it, just install the library before your tests begin:
 
 ```js
-beforeEach(functionJasminePromiseMatchers.install);
+beforeEach(JasminePromiseMatchers.install);
 ```
 
 And uninstall it once your tests are over:
