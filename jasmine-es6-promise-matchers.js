@@ -10,8 +10,11 @@
  * expect(promise).toBeResolved();
  * expect(promise).toBeResolvedWith(someValue);
  */
-(window || global).JasminePromiseMatchers = new function() {
-  var windowOrGlobal = window || global;
+
+(typeof window === 'undefined' ? global : window).JasminePromiseMatchers = new function() {
+
+  var windowOrGlobal = typeof window === 'undefined' ? global : window;
+
   var OriginalPromise;
 
   /**
