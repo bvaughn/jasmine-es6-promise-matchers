@@ -101,5 +101,20 @@ describe('JasminePromiseMatchers', function () {
         reject(data);
       }
     });
+
+    it('should recognize rejected promises with error objects', function(done) {
+        var rejection = new Error('Error message')
+
+        if (completeBefore) {
+          reject(rejection);
+        }
+
+        var errorMatcher = new Error('Error message')
+        expect(promise).toBeRejectedWith(errorMatcher, done);
+
+        if (!completeBefore) {
+          reject(rejection);
+        }
+      });
   });
 });

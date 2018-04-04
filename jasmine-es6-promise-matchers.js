@@ -40,7 +40,16 @@
     RESOLVED: 'resolved',
   };
 
+  function isError(value) {
+    return typeof value === 'object' && value instanceof Error;
+  }
+
   var verifyData = function(actualData, expectedData, done) {
+    if (isError(actualData) && isError(expectedData)) {
+        actualData = String(actualData);
+        expectedData = String(expectedData);
+    }
+
     if (expectedData !== undefined) {
       if (expectedData.asymmetricMatch instanceof Function) {
         if (!expectedData.asymmetricMatch(actualData)) {
