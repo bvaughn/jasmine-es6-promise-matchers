@@ -35,53 +35,73 @@
   };
 
   var PROMISE_STATE = {
-    PENDING: 'pending',
     REJECTED: 'rejected',
     RESOLVED: 'resolved',
   };
 
   function isError(value) {
-    return typeof value === 'object' && value instanceof Error;
+    return value instanceof Error;
   }
 
-  var verifyData = function(actualData, expectedData, done) {
+  function isAsymmetric(value) {
+    return value.asymmetricMatch instanceof Function;
+  }
+
+  var verifyData = function(actualData, expectedData) {
+    if (expectedData === undefined) {
+      return { pass: true };
+    }
+
     if (isError(actualData) && isError(expectedData)) {
         actualData = String(actualData);
         expectedData = String(expectedData);
     }
 
-    if (expectedData !== undefined) {
-      if (expectedData.asymmetricMatch instanceof Function) {
-        if (!expectedData.asymmetricMatch(actualData)) {
-          done.fail('Expected ' + actualData + ' to contain ' + expectedData);
-        }
-      } else if (actualData !== expectedData) {
-        done.fail('Expected ' + actualData + ' to be ' + expectedData);
-      }
+    if (isAsymmetric(expectedData)) {
+      return {
+        pass: expectedData.asymmetricMatch(actualData),
+        message: 'Expected "' + actualData + '" to contain "' + expectedData + '"'
+      };
     }
+
+    return {
+      pass: actualData === expectedData,
+      message: 'Expected "' + actualData + '" to be "' + expectedData + '"'
+    };
   };
 
-  var verifyState = function(actualState, expectedState, done) {
-    if (actualState !== expectedState) {
-      done.fail('Expected ' + actualState + ' to be ' + expectedState);
-    }
+  var verifyState = function(actualState, expectedState) {
+    return {
+      pass: actualState === expectedState,
+      message: 'Expected promise to be ' + actualState + ' but it was ' + expectedState + ' instead'
+    };
   };
 
   // Helper method to verify expectations and return a Jasmine-friendly info-object
-  var verifyPromiseExpectations = function(done, promise, expectedState, expectedData) {
-    promise.then(
-      function(data) {
-        verifyState(PROMISE_STATE.RESOLVED, expectedState, done);
-        verifyData(data, expectedData, done);
-        done();
-      },
-      function(data) {
-        verifyState(PROMISE_STATE.REJECTED, expectedState, done);
-        verifyData(data, expectedData, done);
-        done();
-      });
+  var verifyPromiseExpectations = function(done, promise, expectedState, expectedData, isNegative) {
+    function verify(promiseState) {
+      return function(data) {
+        var test = verifyState(promiseState, expectedState);
 
-    return {pass: true};
+        if (test.pass) {
+          test = verifyData(data, expectedData);
+        }
+
+        if (!test.pass && !isNegative) {
+          done.fail(new Error(test.message));
+          return;
+        }
+
+        done();
+      }
+    }
+
+    promise.then(
+      verify(PROMISE_STATE.RESOLVED),
+      verify(PROMISE_STATE.REJECTED)
+    );
+
+    return { pass: true };
   };
 
   // Install the matchers
@@ -98,6 +118,10 @@
         return {
           compare: function(promise, expectedData, done) {
             return verifyPromiseExpectations(done, promise, PROMISE_STATE.REJECTED, expectedData);
+          },
+
+          negativeCompare: function (promise, expectedData, done) {
+            return verifyPromiseExpectations(done, promise, PROMISE_STATE.REJECTED, expectedData, true);
           }
         };
       },

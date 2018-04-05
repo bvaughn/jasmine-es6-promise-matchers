@@ -103,18 +103,48 @@ describe('JasminePromiseMatchers', function () {
     });
 
     it('should recognize rejected promises with error objects', function(done) {
-        var rejection = new Error('Error message')
+      var rejection = new Error('Error message');
 
-        if (completeBefore) {
-          reject(rejection);
-        }
+      if (completeBefore) {
+        reject(rejection);
+      }
 
-        var errorMatcher = new Error('Error message')
-        expect(promise).toBeRejectedWith(errorMatcher, done);
+      var errorMatcher = new Error('Error message');
+      expect(promise).toBeRejectedWith(errorMatcher, done);
 
-        if (!completeBefore) {
-          reject(rejection);
-        }
-      });
+      if (!completeBefore) {
+        reject(rejection);
+      }
+    });
+
+    it('should recognize resolved promises with error objects', function(done) {
+      var result = new Error('Error message');
+
+      if (completeBefore) {
+        resolve(result);
+      }
+
+      var errorMatcher = new Error('Error message');
+      expect(promise).toBeResolvedWith(errorMatcher, done);
+
+      if (!completeBefore) {
+        resolve(result);
+      }
+    });
+
+    it('should recognize rejected promises with distinct error messages', function(done) {
+      var rejection = new Error('Some error');
+
+      if (completeBefore) {
+        reject(rejection);
+      }
+
+      var errorMatcher = new Error('Error message');
+      expect(promise).not.toBeRejectedWith(errorMatcher, done);
+
+      if (!completeBefore) {
+        reject(rejection);
+      }
+    });
   });
 });
