@@ -18,9 +18,7 @@
   "license": "Apache License Version 2.0,",
   "main": "jasmine-es6-promise-matchers.js",
   "directories": {},
-  "dependencies": {
-    "es6-promise": "~2.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "es6-promise": "^2.0.1",
     "jasmine": "2.1.1",
@@ -31,7 +29,8 @@
     "karma-jasmine": "^1.1.0"
   },
   "scripts": {
-    "test": "karma start karma.conf.js"
+    "test": "karma start karma.conf.js --single-run",
+    "tdd": "karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
