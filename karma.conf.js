@@ -14,10 +14,16 @@ module.exports = function (config) {
     port: 8080,
     runnerPort: 9100,
     colors: true,
-    logLevel: config.LOG_DEBUG,
+    logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: process.env.CHROME_HEADLESS ? ['ChromeHeadless'] : ['Chrome'],
     captureTimeout: 5000,
-    singleRun: false
+    singleRun: false,
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    }
   });
 };
