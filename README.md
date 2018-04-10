@@ -3,58 +3,58 @@ Jasmine Promise Matchers
 
 Custom matchers for testing ES6 Promises with **[Jasmine 2.x](http://jasmine.github.io/)**.
 
-This library is compatible with the **[ES6Promise polyfill library](https://github.com/jakearchibald/es6-promise)** if the current browser does not support ES6 Promises. (This means it will work with Phantom JS.)
+**NOTE: This library expects ES6 `Promise` feature to be present.**
+
+If you're testing in an old environment, e.g. PhantomJS, you need to load a polyfill.
 
 # Installing
 
 You can install with either NPM or Bower like so:
 
 ```shell
-npm install jasmine-es6-promise-matchers
+npm i -D jasmine-es6-promise-matchers
 bower install jasmine-es6-promise-matchers
 ```
 
 # Overview
 
-Testing promises should be simple but it's normally a bit of a hassle. Your tests probably look something like this:
+Using the Jasmine matchers provided by this extension allows a simpler and cleaner flow of unit tests.
+
+**Before:**
+
+This is not only harded to read, but also unstable. If the promise is never resolved, the tests hang for a long timeout.
 
 ```js
-function(done) {
-  promise.then(
-    function(value) {
+describe('test', function() {
+  it('should resolve to something', function(done) {
+    function assert(value) {
       expect(value).toBe('something');
       done();
-    },
-    done.fail);
+    }
+
+    const promise = something.withPromise();
+    promise.then(assert, done.fail);
+  });
+});
 ```
+
+**After:**
 
 Using the matchers provided by this library your tests could instead look like this:
 
 ```js
-function(done) {
-  expect(promise).toBeResolvedWith('something', done);
-}
+describe('test', function() {
+  it('should resolve to something', function(done) {
+    const promise = something.withPromise();
+    expect(promise).toBeResolvedWith('something', done);
+  });
+});
+
 ```
-
-## Initializing the library
-
-To use it, just install the library before your tests begin:
-
-```js
-beforeEach(JasminePromiseMatchers.install);
-```
-
-And uninstall it once your tests are over:
-
-```js
-afterEach(JasminePromiseMatchers.uninstall);
-```
-
-Now you're ready to start testing!
 
 ## Using the matchers
 
-This library includes a couple of matchers, shown below.
+This library includes a couple of matchers, as shown below.
 
 ##### toBeRejected(done:Function)
 Verify that a Promise is (or will be) rejected.
