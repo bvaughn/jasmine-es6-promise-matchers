@@ -73,7 +73,7 @@
   var verifyState = function(actualState, expectedState) {
     return {
       pass: actualState === expectedState,
-      message: 'Expected promise to be ' + actualState + ' but it was ' + expectedState + ' instead'
+      message: 'Expected promise to be ' + expectedState + ' but it was ' + actualState + ' instead'
     };
   };
 
