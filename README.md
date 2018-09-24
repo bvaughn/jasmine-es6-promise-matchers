@@ -1,6 +1,8 @@
 Jasmine Promise Matchers
 ================
 
+**NOTE: If you use Jasmine 3.2+ there are built-in async matchers available**. [Read more here](https://jasmine.github.io/api/3.2/global.html#expectAsync)
+
 Custom matchers for testing ES6 Promises with **[Jasmine 2.x](http://jasmine.github.io/)**.
 
 **NOTE: This library expects ES6 `Promise` feature to be present.**
